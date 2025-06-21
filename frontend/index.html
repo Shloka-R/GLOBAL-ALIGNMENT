@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global Sequence Alignment</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 650px;
+            width: 100%;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            color: #e17055;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 8px #74b9ff;
+        }
+
+        button {
+            background: linear-gradient(to right, #00b894, #00cec9);
+            color: white;
+            font-weight: bold;
+            margin-top: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #0984e3, #6c5ce7);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #a29bfe, #81ecec);
+            border-radius: 12px;
+            color: #2d3436;
+        }
+
+        .result p {
+            font-family: monospace;
+            font-size: 15px;
+            margin: 6px 0;
+        }
+
+        .similarity {
+            font-size: 16px;
+            font-weight: bold;
+            color: #d63031;
+            margin-top: 15px;
+        }
+
+        ::placeholder {
+            color: #b2bec3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>🧬 Global Sequence Alignment</h2>
+
+        <label for="type">Sequence Type</label>
+        <select id="type">
+            <option value="dna">DNA</option>
+            <option value="protein">Protein</option>
+        </select>
+
+        <label for="seq1">Sequence 1</label>
+        <textarea id="seq1" rows="3" placeholder="Enter the first sequence (e.g., GATTACA)"></textarea>
+
+        <label for="seq2">Sequence 2</label>
+        <textarea id="seq2" rows="3" placeholder="Enter the second sequence (e.g., GCATGCU)"></textarea>
+
+        <label for="match">Match Score</label>
+        <input type="number" id="match" placeholder="e.g., 1" />
+
+        <label for="mismatch">Mismatch Penalty</label>
+        <input type="number" id="mismatch" placeholder="e.g., -1" />
+
+        <label for="gap">Gap Penalty</label>
+        <input type="number" id="gap" placeholder="e.g., -1" />
+
+        <button onclick="align()">✨ Align Sequences</button>
+
+        <div class="result" id="result" style="display: none;">
+            <p><strong>🔹 Aligned Sequence 1:</strong><br><span id="a1"></span></p>
+            <p><strong>🔸 Aligned Sequence 2:</strong><br><span id="a2"></span></p>
+            <p class="similarity">🔬 Similarity: <span id="sim"></span></p>
+        </div>
+    </div>
+
+    <script>
+        async function align() {
+            const seq1 = document.getElementById('seq1').value;
+            const seq2 = document.getElementById('seq2').value;
+            const match = document.getElementById('match').value;
+            const mismatch = document.getElementById('mismatch').value;
+            const gap = document.getElementById('gap').value;
+
+            const res = await fetch('http://127.0.0.1:5000/align', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ seq1, seq2, match, mismatch, gap })
+            });
+
+            const data = await res.json();
+            document.getElementById('a1').innerText = data.aligned_seq1;
+            document.getElementById('a2').innerText = data.aligned_seq2;
+            document.getElementById('sim').innerText = data.similarity;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
