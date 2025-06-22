@@ -153,7 +153,8 @@
             const mismatch = document.getElementById('mismatch').value;
             const gap = document.getElementById('gap').value;
 
-            const res = await fetch('http://127.0.0.1:5000/align', {
+            const res = await fetch('https://58bca98b-5301-4307-aacf-4486e2b319ea-00-10qlzpye2a1up.sisko.replit.dev/align', {
+
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ seq1, seq2, match, mismatch, gap })
